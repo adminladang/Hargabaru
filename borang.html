@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <title>Borang Harga Sayur</title>
+  <style>
+    body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background-image: url("banner.jpg"); /* Ganti dengan link sebenar */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+    .card {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2f5233;
+    }
+
+    label {
+      margin-top: 10px;
+      display: block;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #388e3c;
+    }
+
+    #status {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Isi Harga Harian Sayur</h2>
+    <form id="borang">
+      <label>Tarikh:</label>
+      <input type="date" name="tarikh" required>
+
+      <label>Nama Sayur:</label>
+      <input type="text" name="sayur" required>
+
+      <label>Unit:</label>
+      <select name="unit" required>
+        <option value="kg">kg</option>
+        <option value="ikat">ikat</option>
+        <option value="tandan">tandan</option>
+      </select>
+
+      <label>Harga RM:</label>
+      <input type="number" name="harga" step="0.01" required>
+
+      <button type="submit">Hantar</button>
+    </form>
+    <p id="status"></p>
+  </div>
+
+  <script>
+  const form = document.getElementById("borang");
+  const status = document.getElementById("status");
+  const scriptURL = "https://script.google.com/macros/s/AKfycbwC9HnKqA01boh38NetZhg8ltw_HMyq9umuyXakUlNYHFAy1jDxs8g28VUlhvyGErXn9A/exec"; // Gantikan dengan URL sebenar anda
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const data = new FormData(form);
+fetch(scriptURL, {
+  method: "POST",
+  body: data
+})
+    // Papar status loading
+    status.textContent = "⏳ Sedang hantar...";
+    status.style.color = "black";
+
+    fetch(scriptURL, {
+      method: "POST",
+      body: data
+    })
+    .then(response => {
+      if (response.ok) {
+        status.textContent = "✅ Berjaya dihantar!";
+        status.style.color = "green";
+        form.reset(); // Kosongkan borang selepas submit berjaya
+      } else {
+        status.textContent = "❌ Gagal: Server tidak respons.";
+        status.style.color = "red";
+      }
+    })
+    .catch(error => {
+      status.textContent = "❌ Gagal: " + error.message;
+      status.style.color = "red";
+    });
+  });
+</script>
+
+</body>
+</html>
